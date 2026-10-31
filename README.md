@@ -3,10 +3,10 @@
 </div>
 
 <div align="center">
-  <img src="https://img.shields.io/badge/node-18+-A6BDAD?style=flat-square&labelColor=0B0E0D&logo=nodedotjs&logoColor=EEF1ED" alt="node 18+"/>
-  <img src="https://img.shields.io/github/last-commit/Madmins07/cgpa_simulator?style=flat-square&labelColor=0B0E0D&color=788A7F&label=updated" alt="last-commit"/>
-  <img src="https://img.shields.io/github/license/Madmins07/cgpa_simulator?style=flat-square&labelColor=0B0E0D&color=5A6A60" alt="license"/>
-  <a href="https://cgpa-simulator-omega.vercel.app"><img src="https://img.shields.io/badge/live-cgpa--simulator--omega.vercel.app-EEF1ED?style=flat-square&labelColor=0B0E0D" alt="live cgpa--simulator--omega.vercel.app"/></a>
+  <img src="https://img.shields.io/badge/node-18+-38E0FF?style=flat-square&labelColor=07080D&logo=nodedotjs&logoColor=EEF1ED" alt="node 18+"/>
+  <img src="https://img.shields.io/github/last-commit/Madmins07/cgpa_simulator?style=flat-square&labelColor=07080D&color=6F7693&label=updated" alt="last-commit"/>
+  <img src="https://img.shields.io/github/license/Madmins07/cgpa_simulator?style=flat-square&labelColor=07080D&color=1C2032" alt="license"/>
+  <a href="https://cgpa-simulator-omega.vercel.app"><img src="https://img.shields.io/badge/live-cgpa--simulator--omega.vercel.app-F3F5FF?style=flat-square&labelColor=07080D" alt="live cgpa--simulator--omega.vercel.app"/></a>
 </div>
 
 ## about
