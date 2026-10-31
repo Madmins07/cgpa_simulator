@@ -1,131 +1,78 @@
-# CGPA Path Explorer
+<div align="center">
+  <img src="assets/banner.svg" alt="CGPA Path Explorer. The exact probability distribution of your semester CGPA, every grade path convolved." width="100%"/>
+</div>
 
-Full-stack semester CGPA estimator that evaluates **all possible grade paths** from your per-course grade probabilities.
+<div align="center">
+  <img src="https://img.shields.io/badge/node-18+-A6BDAD?style=flat-square&labelColor=0B0E0D&logo=nodedotjs&logoColor=EEF1ED" alt="node 18+"/>
+  <img src="https://img.shields.io/github/last-commit/Madmins07/cgpa_simulator?style=flat-square&labelColor=0B0E0D&color=788A7F&label=updated" alt="last-commit"/>
+  <img src="https://img.shields.io/github/license/Madmins07/cgpa_simulator?style=flat-square&labelColor=0B0E0D&color=5A6A60" alt="license"/>
+  <a href="https://cgpa-simulator-omega.vercel.app"><img src="https://img.shields.io/badge/live-cgpa--simulator--omega.vercel.app-EEF1ED?style=flat-square&labelColor=0B0E0D" alt="live cgpa--simulator--omega.vercel.app"/></a>
+</div>
 
-Grades supported: **EX, A, B, C, D, P, F**
+## about
 
----
+Every student at Kharagpur has asked the same question the week before grades drop: *what do I need this semester?*
+This app answers it properly. You give each course a credit weight and a probability for every grade from EX to F,
+and the backend **convolves those distributions over every possible grade path**. The result is the exact probability
+distribution of your semester CGPA. A Monte Carlo run (default 25,000 trials) sits alongside it so you can see the
+simulated mean converge on the exact one.
 
-## Features
+- Expected CGPA, standard deviation, median, P10 / P25 / P75 / P90, best and worst case.
+- Probability of clearing a target CGPA.
+- Histogram, cumulative distribution curve, and per-course grade bars.
+- Probability sliders auto-rebalance so each course always sums to 100%.
 
-- Exact probabilistic simulation using backend convolution (not random Monte Carlo trials).
-- Course-wise credit input (integer credits, minimum 1).
-- Probability sliders for each grade (auto-rebalanced to always sum to 100%).
-- Statistical outputs:
-  - Expected CGPA
-  - Standard deviation
-  - Median, P10, P25, P75, P90
-  - Best/worst possible CGPA
-  - Number of evaluated paths and distinct outcome states
-  - Probability of achieving target CGPA
-- Graphs:
-  - CGPA probability histogram
-  - Cumulative distribution curve (CDF)
-  - Per-course grade probability bars
+## stack
 
----
+| part | what |
+|:--|:--|
+| `frontend/` | React 18 + Vite, Recharts for the charts, lucide icons. |
+| `backend/` | Express API with helmet and rate limiting; `src/simulation.js` holds the convolution engine. |
+| `docker-compose.yml` | Two containers, nginx in front of the frontend proxying `/api` to the backend. |
 
-## Repo Structure
-
-```text
-dukh/
-├── backend/
-│   ├── src/
-│   │   ├── server.js
-│   │   ├── simulation.js
-│   │   └── routes/simulate.js
-│   ├── Dockerfile
-│   └── package.json
-├── frontend/
-│   ├── src/
-│   │   ├── App.jsx
-│   │   ├── main.jsx
-│   │   └── index.css
-│   ├── Dockerfile
-│   ├── nginx.conf
-│   ├── vite.config.js
-│   └── package.json
-├── docker-compose.yml
-└── package.json
-```
-
----
-
-## Local Development
-
-### 1. Install dependencies
+## run
 
 ```bash
-npm run install:all
+npm run install:all      # installs backend and frontend
+npm run dev:backend      # http://localhost:5001 (5000 is AirPlay on macOS)
+npm run dev:frontend     # http://localhost:3000, proxies /api to the backend
 ```
 
-### 2. Start backend
+With Docker:
 
 ```bash
-npm run dev:backend
+docker compose up --build
+# frontend on :3000, backend on :5050
 ```
 
-Backend runs on `http://localhost:5000`.
+## api
 
-### 3. Start frontend
-
-In another terminal:
-
-```bash
-npm run dev:frontend
-```
-
-Frontend runs on `http://localhost:3000` and proxies `/api` to backend.
-
----
-
-## Docker Deployment
-
-```bash
-docker-compose up --build
-```
-
-- Frontend: `http://localhost:3000`
-- Backend (direct): `http://localhost:5050`
-- Frontend calls backend through nginx `/api` proxy.
-
----
-
-## API
-
-### `POST /api/simulate`
-
-Request:
+`POST /api/simulate`
 
 ```json
 {
   "targetCgpa": 8.0,
   "courses": [
-    {
-      "name": "Mathematics",
-      "credits": 4,
-      "probabilities": {
-        "EX": 0.1,
-        "A": 0.2,
-        "B": 0.3,
-        "C": 0.2,
-        "D": 0.1,
-        "P": 0.1,
-        "F": 0.0
-      }
-    }
+    { "name": "Mathematics", "credits": 4,
+      "probabilities": { "EX": 0.1, "A": 0.2, "B": 0.3, "C": 0.2, "D": 0.1, "P": 0.1, "F": 0.0 } }
   ]
 }
 ```
 
-Response includes:
-- `summary` (stats + path counts)
-- `distribution` (bucketed chart data)
-- `exactDistribution` (all exact CGPA states)
-- `gradeBreakdown` and `courseStats`
+Returns `summary` (statistics and path counts), `distribution` (bucketed chart data), `exactDistribution`
+(every reachable CGPA state), `gradeBreakdown` and `courseStats`.
 
-### `GET /api/grades`
-Returns grade order and grade-point map.
+`GET /api/grades` returns the grade order and grade-point map. `GET /health` is the health check.
 
-### `GET /health`
-Backend health endpoint.
+## how the maths works
+
+For each course, the grade points times credits form a discrete random variable. The semester total is the sum of
+independent course variables, so its distribution is the convolution of theirs. The engine walks the courses once,
+keeping a map from reachable credit-point totals to their probabilities, which is exact and runs in milliseconds
+even for a full semester.
+
+---
+
+<div align="center">
+  <sub>Part of <a href="https://github.com/Madmins07">Madmins07</a> · Madhav Agarwal · IIT Kharagpur</sub>
+</div>

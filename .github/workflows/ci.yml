@@ -1,0 +1,26 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: install
+        run: npm run install:all
+      - name: backend syntax check
+        run: node --check backend/src/server.js && node --check backend/src/simulation.js
+      - name: backend smoke test
+        run: |
+          PORT=5055 node backend/src/server.js &
+          sleep 2
+          curl -fsS localhost:5055/health
+      - name: frontend build
+        run: npm run build:frontend
